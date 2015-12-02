@@ -25,13 +25,12 @@ class PictogramListAPI(Resource):
         root = request.url_root
         args = self.reqparse.parse_args()
         pictogram = {
-            'name': args['name'],
-            'last_update': datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
-            'path': ''
+            "name": args['name'],
+            "last_update": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
         }
         pictogram_id = self.mongo.db.pictograms.insert(pictogram)
         pictogram = self.mongo.db.pictograms.find_one({"_id": pictogram_id})
-        pictogram['content_url'] = '%s%s/%s' % (root, rule, pictogram_id)
+        pictogram["content_url"] = '%s%s/%s' % (root, rule, pictogram_id)
         return pictogram
 
 
@@ -53,16 +52,17 @@ class PictogramAPI(Resource):
 
     def put(self, id):
         file = request.files['file']
+        file.filename = str(id) + '.jpg'
         image_path = os.path.join(self.FILE_PATH, file.filename)
         file.save(image_path)
         pictogram = self.mongo.db.pictograms.find_one({"_id": id})
-        pictogram['last_update'] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        pictogram['path'] = './images/' + file.filename
-        result = self.mongo.db.pictograms.update({'_id': id}, {"$set": pictogram}, upsert=False)
+        pictogram["last_update"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        pictogram["path"] = '/images/' + file.filename
+        result = self.mongo.db.pictograms.update({"_id": id}, {"$set": pictogram}, upsert=False)
         return pictogram
 
     def delete(self, id):
         result = self.mongo.db.tests.delete_many({"_id": id})
         if result.deleted_count == 0:
             abort(404)
-        return {'status': '200'}
+        return {"status": '200'}

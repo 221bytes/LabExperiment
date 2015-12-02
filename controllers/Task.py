@@ -5,8 +5,7 @@ class TaskListAPI(Resource):
     def __init__(self, **kwargs):
         self.mongo = kwargs['smart_engine']
         self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('title', type=str, required=True,
-                                   help='No task title provided', location='json')
+        self.reqparse.add_argument('title', type=str, required=True, location='json')
         super(TaskListAPI, self).__init__()
 
     def get(self):

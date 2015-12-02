@@ -53,11 +53,12 @@ class SoundAPI(Resource):
 
     def put(self, id):
         file = request.files['file']
+        file.filename = str(id) + '.mp3'
         image_path = os.path.join(self.FILE_PATH, file.filename)
         file.save(image_path)
         sound = self.mongo.db.sounds.find_one({"_id": id})
         sound['last_update'] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-        sound['path'] = './images/' + file.filename
+        sound['path'] = '/sounds/' + file.filename
         result = self.mongo.db.sounds.update({'_id': id}, {"$set": sound}, upsert=False)
         return sound
 

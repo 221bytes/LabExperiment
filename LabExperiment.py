@@ -2,6 +2,8 @@ from flask import Flask, jsonify, make_response
 from flask.ext.pymongo import PyMongo
 from flask.ext.restful import Api
 from bson.json_util import dumps
+
+from controllers.Event import EventListAPI, EventAPI
 from controllers.Pictogram import PictogramAPI, PictogramListAPI
 from controllers.Task import TaskAPI, TaskListAPI
 from controllers.Sound import SoundAPI, SoundListAPI
@@ -13,10 +15,6 @@ errors = {
     'NotFound': {
         'message': "Page Not Found",
         'status': 404
-    },
-    'BadRequest': {
-        'message': "The request could not be understood by the server due to malformed syntax.",
-        'status': 400
     }
 }
 
@@ -58,6 +56,13 @@ api.add_resource(PictogramListAPI, '/todo/api/v1/pictograms', endpoint='pictogra
 
 api.add_resource(PictogramAPI, '/todo/api/v1/pictogram/<ObjectId:id>', endpoint='pictogram',
                  resource_class_kwargs={'smart_engine': mongo, 'path': IMAGES_PATH})
+
+api.add_resource(EventListAPI, '/todo/api/v1/events', endpoint='events',
+                 resource_class_kwargs={'smart_engine': mongo})
+
+api.add_resource(EventAPI, '/todo/api/v1/event/<ObjectId:id>', endpoint='event',
+                 resource_class_kwargs={'smart_engine': mongo, 'path': IMAGES_PATH})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
