@@ -22,14 +22,15 @@ class EventListAPI(Resource):
         return ret
 
     def post(self):
-        test = request.get_json()
+        event = request.get_json()
         #https://webargs.readthedocs.org/en/latest/quickstart.html
-        test['sounds'] = None
+        event['sounds'] = None
         event = {
-            "pictograms": test['pictograms'],
-            "sounds": test['sounds'],
-            "geojson": test['geojson'],
+            "pictograms": event['pictograms'],
+            "sounds": event['sounds'],
+            "geojson": event['geojson'],
             "last_update": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+            "importance":event['importance'],
         }
         event_id = self.mongo.db.events.insert(event, check_keys=False)
         event = self.mongo.db.events.find_one({"_id": event_id})

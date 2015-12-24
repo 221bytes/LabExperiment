@@ -1,14 +1,16 @@
 from flask import Flask, jsonify, make_response
+from flask.ext.cors import CORS
 from flask.ext.pymongo import PyMongo
 from flask.ext.restful import Api
-from bson.json_util import dumps
 
+from bson.json_util import dumps
 from controllers.Event import EventListAPI, EventAPI
 from controllers.Pictogram import PictogramAPI, PictogramListAPI
 from controllers.Task import TaskAPI, TaskListAPI
 from controllers.Sound import SoundAPI, SoundListAPI
 
 app = Flask(__name__, static_folder='images')
+cors = CORS(app, resources={r"/todo/api/": {"origins": "*"}})
 
 # Define errors http://werkzeug.pocoo.org/docs/0.10/exceptions/
 errors = {
@@ -37,6 +39,7 @@ def output_json(obj, code, headers=None):
     return resp
 
 
+
 mongo = PyMongo(app, config_prefix='MONGO')
 
 api.add_resource(TaskListAPI, '/todo/api/v1/tasks', endpoint='tasks',
@@ -63,6 +66,6 @@ api.add_resource(EventListAPI, '/todo/api/v1/events', endpoint='events',
 api.add_resource(EventAPI, '/todo/api/v1/event/<ObjectId:id>', endpoint='event',
                  resource_class_kwargs={'smart_engine': mongo, 'path': IMAGES_PATH})
 
-
 if __name__ == '__main__':
+    # app.run(debug=False, host='192.168.1.22')
     app.run(debug=True)
